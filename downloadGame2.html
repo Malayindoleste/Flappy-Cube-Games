@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Download</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+    }
+    
+    .downloadFile {
+      background-color: #01a;
+      border: 1px solid #0ff;
+      color: white;
+    }
+    
+    footer {
+    color: #005;
+    font-size: 15px;
+    top: 250vh;
+    left: 105px;
+    }
+    
+    .info-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        table {
+            width: 80%;
+            max-width: 600px;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background: #007bff;
+            color: white;
+        }
+        
+        #load {
+          display: block;
+          font-size: 17;
+        }
+  </style>
+</head>
+<body>
+  <center>
+    <h2>Download latest version</h2>
+  </center>
+  <p>Do you want to download this game?</p>
+  <p>Before downloading the game, it is recommended to read our game update log so you know what features are available</p>
+  
+  <a class="downloadFile" href="https://drive.google.com/uc?export=download&id=11r5DQXUacnJSkiR3lXzoT_epPv_hnbCJ" download="App_brand_genius 10.8.7.apk">Download 10.8.7</a>
+  
+  <h2>Update log</h2>
+  <p id="load">Retrieving update log...</p>
+  <div class="info-container">
+        <table id="gameTable">
+            <thead>
+                <tr>
+                    <th>Version</th>
+                    <th>Short description</th>
+                    <th>Log</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+            </tbody>
+        </table>
+    </div>
+  
+  <footer>© 2025 Classic Studio</footer>
+  
+  <script>
+  const SHEET_ID = "14VsItKfwX567JZ9kxFfLxTTIskaNKFVcPmVUPeVXoQI"; 
+        const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+
+        function fetchSpreadsheet() {
+    fetch(SHEET_URL)
+        .then(response => response.text())
+        .then(data => {
+            let rows = data.split("\n").map(row => {
+                return row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
+            });
+
+            let tableBody = document.querySelector("#gameTable tbody");
+            tableBody.innerHTML = ""; // Bersihkan isi sebelumnya
+
+            // Masukkan data ke dalam tabel
+            rows.forEach(row => {
+                let tr = document.createElement("tr");
+                row.forEach(cell => {
+                    let td = document.createElement("td");
+                    td.textContent = cell.replace(/(^"|"$)/g, ""); // Hapus kutip ganda di awal & akhir
+                    tr.appendChild(td);
+                });
+                tableBody.appendChild(tr);
+            });
+            
+            document.getElementById('load').style.display = 'none';
+        })
+        .catch(error => {
+            console.error("Error fetching data:", error);
+            document.getElementById('load').textContent = "Failed to retrieve update log. Please check your connection and try again!";
+            document.getElementById('load').style.color = "red";
+            document.getElementById('load').style.display = "block";
+        });
+}
+
+        // Ambil data saat halaman dimuat
+        document.addEventListener("DOMContentLoaded", fetchSpreadsheet);
+  </script>
+</body>
+</html>
