@@ -48,15 +48,29 @@
             width: 180px;
             font-size: 19px;
         }
-        
-        #load {
-          display: block;
-          font-size: 15px;
+        #load, #load2 {
+            display: block;
+            font-size: 15px;
+        }
+        .toggle-container {
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .toggle-label {
+            font-size: 16px;
+            margin-left: 10px;
         }
     </style>
 </head>
 <body>
 
+    <div class="toggle-container">
+        <input type="checkbox" id="swToggle">
+        <label for="swToggle" class="toggle-label">Enable Offline Mode (Cache Data)</label>
+    </div>
+    
     <h2>Flappy Cube by Classic Studio</h2>
     
     <img src="https://raw.githubusercontent.com/Malayindoleste/Flappy-Cube-Games/refs/heads/main/app_icon.png" alt="Flappy Cube Icon">
@@ -72,15 +86,13 @@
                     <th>Description</th>
                 </tr>
             </thead>
-            <tbody>
-                
-            </tbody>
+            <tbody></tbody>
         </table>
     </div>
   
     <p>Additional: Our game is a non-commercial project which means, we do not expect any profit from our game, so our game does not have any ads.</p>
     <button class="downloadFile" onclick="downloadPage()">Download Latest version</button>
-    
+
     <h2>App Brand Genius by Classic Studio</h2>
     
     <img src="https://raw.githubusercontent.com/Malayindoleste/Flappy-Cube-Games/refs/heads/main/app_icon2.png" alt="App Brand Genius Icon">
@@ -88,82 +100,112 @@
     <p>Game Information:</p>
     <p id="load2">Retrieving application information...</p>
 
-    <!-- Ini adalah gameTable kedua -->
-<div class="info-container">
-    <table id="gameTable2">
-        <thead>
-            <tr>
-                <th>Information</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-</div>
-<button class="downloadFile" onclick="downloadPage2()">Download Latest version</button>
-  
+    <div class="info-container">
+        <table id="gameTable2">
+            <thead>
+                <tr>
+                    <th>Information</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <button class="downloadFile" onclick="downloadPage2()">Download Latest version</button>
+
     <script>
-      
         function downloadPage() {
             window.location.href = "downloadGame.html";
         }
-        
+
         function downloadPage2() {
             window.location.href = "downloadGame2.html";
         }
 
-        // ID Spreadsheet Google Sheets
         const SHEET_ID = "1tG1ftpq4Z6PhtdnHkpGvIh_PoRwJIHvRzUHfVi8pDHA"; 
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
 
         function fetchSpreadsheet() {
-    fetch(SHEET_URL)
-        .then(response => response.text())
-        .then(data => {
-            let rows = data.split("\n").map(row => {
-                return row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
-            });
+            fetch(SHEET_URL)
+                .then(response => response.text())
+                .then(data => {
+                    let rows = data.split("\n").map(row => row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || []);
+                    let tableBody1 = document.querySelector("#gameTable tbody");
+                    let tableBody2 = document.querySelector("#gameTable2 tbody");
+                    tableBody1.innerHTML = ""; 
+                    tableBody2.innerHTML = ""; 
 
-            let tableBody1 = document.querySelector("#gameTable tbody"); // Tabel pertama
-            let tableBody2 = document.querySelector("#gameTable2 tbody"); // Tabel kedua
-            tableBody1.innerHTML = ""; 
-            tableBody2.innerHTML = ""; 
+                    let selectedRows = [1, 13];
 
-            // Baris pertama game dan baris awal game berikutnya
-            let selectedRows = [1, 13]; // Baris 1-9 di tabel pertama, baris 10+ di tabel kedua
+                    rows.forEach((row, index) => {
+                        let tr = document.createElement("tr");
+                        row.forEach(cell => {
+                            let td = document.createElement("td");
+                            td.textContent = cell.replace(/(^"|"$)/g, "");
+                            tr.appendChild(td);
+                        });
 
-            rows.forEach((row, index) => {
-                let tr = document.createElement("tr");
-                row.forEach(cell => {
-                    let td = document.createElement("td");
-                    td.textContent = cell.replace(/(^"|"$)/g, ""); // Hapus kutip ganda
-                    tr.appendChild(td);
+                        if (index + 1 >= selectedRows[0] && index + 1 < selectedRows[1]) {
+                            tableBody1.appendChild(tr);
+                        } else if (index + 1 >= selectedRows[1]) {
+                            tableBody2.appendChild(tr);
+                        }
+                    });
+
+                    document.getElementById('load').style.display = 'none';
+                    document.getElementById('load2').style.display = 'none';
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                    document.getElementById('load').textContent = "Failed to retrieve information!";
+                    document.getElementById('load').style.color = "red";
+                    document.getElementById('load2').textContent = "Failed to retrieve information!";
+                    document.getElementById('load2').style.color = "red";
                 });
+        }
 
-                if (index + 1 >= selectedRows[0] && index + 1 < selectedRows[1]) {
-                    // Masukkan ke tabel pertama (dari selectedRows[0] hingga sebelum selectedRows[1])
-                    tableBody1.appendChild(tr);
-                } else if (index + 1 >= selectedRows[1]) {
-                    // Masukkan ke tabel kedua (mulai dari selectedRows[1])
-                    tableBody2.appendChild(tr);
-                }
+        document.addEventListener("DOMContentLoaded", function() {
+          fetchSpreadsheet();
+    const swToggle = document.getElementById("swToggle");
+
+    // Cek status toggle dari LocalStorage
+    if (localStorage.getItem("swEnabled") === "true") {
+        swToggle.checked = true;
+        registerServiceWorker();
+    }
+
+    swToggle.addEventListener("change", function() {
+        if (this.checked) {
+            registerServiceWorker();
+            localStorage.setItem("swEnabled", "true");
+        } else {
+            unregisterServiceWorker();
+            localStorage.setItem("swEnabled", "false");
+        }
+    });
+
+    function registerServiceWorker() {
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("sw.js")
+                .then(() => console.log("Service Worker Registered"))
+                .catch(err => console.log("Service Worker Failed:", err));
+        }
+    }
+
+    function unregisterServiceWorker() {
+        navigator.serviceWorker.getRegistrations()
+            .then(registrations => {
+                registrations.forEach(reg => reg.unregister());
+                console.log("Service Worker Unregistered");
             });
 
-            document.getElementById('load').style.display = 'none';
-            document.getElementById('load2').style.display = 'none';
-        })
-        .catch(error => {
-            console.error("Error fetching data:", error);
-            document.getElementById('load').textContent = "Failed to retrieve information!";
-            document.getElementById('load').style.color = "red";
-            document.getElementById('load2').textContent = "Failed to retrieve information!";
-            document.getElementById('load2').style.color = "red";
+        caches.keys().then(names => {
+            names.forEach(name => caches.delete(name));
+            console.log("Cache Cleared");
         });
-}
-
-// Ambil data saat halaman dimuat
-document.addEventListener("DOMContentLoaded", fetchSpreadsheet);
+    }
+});
     </script>
 </body>
 </html>
