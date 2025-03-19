@@ -57,10 +57,41 @@
   <center>
     <h2>Download latest version</h2>
   </center>
-  <p>Do you want to download this game?</p>
-  <p>Before downloading the game, it is recommended to read our game update log so you know what features are available</p>
+  <h2>The App Brand Genius app is no longer being developed</h2>
+  <p>There was an issue with the app's compatibility with google ads, so we decided not to develop this game anymore. But we will make a similar game with our own version</p>
   
-  <a class="downloadFile" href="https://drive.google.com/uc?export=download&id=11r5DQXUacnJSkiR3lXzoT_epPv_hnbCJ" download="App_brand_genius 10.8.7.apk">Download 10.8.7</a>
+  <a class="downloadFile" href="" download="App_brand_genius 10.8.7.apk">Download 10.8.7</a>
+  
+  <h2>Game description</h2>
+  <p>🎉 Welcome to App Brand Genius: The Ultimate Trivia Quiz Game Experience! 🎉</p>
+
+<p>Are you a true trivia enthusiast with a knack for identifying brands? Dive into the world of "App Brand Genius," a free and exciting quiz game where your knowledge meets fun! 🧠✨</p>
+
+<p>🧩 Main Game Modes:</p>
+
+<p>- Classic Quiz: Test your skills in our engaging classic quiz mode. Guess the brand and push your trivia knowledge to the limits! 👟🕶️📱</p>
+
+<p>- Online Duels: Connect with friends or compete against players worldwide in thrilling head-to-head trivia duels. Show off your brand guessing prowess! 🌍🤝</p>
+
+<p>- Daily Tasks & Missions: Keep the fun going every day with new tasks and missions that challenge your brand recognition and offer great rewards! 📅🏆</p>
+
+<p>- Leaderboard: Rise to the top! Compare your scores with friends and global players on our vibrant leaderboard. Aim for the stars! 🌟📈</p>
+
+<p>🕹️ Unique Events:</p>
+
+<p>- Tiktactoe and Crossword Events: Spice up your gameplay with our special tiktactoe and crossword challenges. It's not just about being smart—it's about being strategic! ❌⭕✏️</p>
+
+<p>🎒 Additional Level Packs:</p>
+
+<p>Unlock exciting level packs with various topics to expand your trivia journey. Whether you're into fashion, tech, sports, or more, we've got you covered! 🏀👗💻</p>
+
+<p>🔍 Keywords Galore: Quiz, trivia, guess, brand game, logo challenge, knowledge fun, brain teaser—download today and start your brand journey!</p>
+
+<p>🔥 Free to Play: No hidden costs, no strings attached. Dive into the world of trivia and brand guessing at no cost with "App Brand Genius!" 🆓</p>
+
+<p>Enjoy an unparalleled mix of trivia, guessing games, and brand challenges designed to entertain and enlighten. Compete, learn, and have fun with friends or solo. Download now and become the ultimate "App Brand Genius!" 🚀📲</p>
+
+<p>Join our community of quiz lovers today and let your genius shine through every guess! 💡🔍</p>
   
   <h2>Update log</h2>
   <p id="load">Retrieving update log...</p>
@@ -83,6 +114,8 @@
   <script>
   const SHEET_ID = "14VsItKfwX567JZ9kxFfLxTTIskaNKFVcPmVUPeVXoQI"; 
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+        const FILE_ID = "11r5DQXUacnJSkiR3lXzoT_epPv_hnbCJ";
+        const URL = `https://drive.google.com/uc?export=download&id=${FILE_ID}`;
 
         function fetchSpreadsheet() {
     fetch(SHEET_URL)
@@ -118,6 +151,10 @@
 
         // Ambil data saat halaman dimuat
         document.addEventListener("DOMContentLoaded", fetchSpreadsheet);
+        
+        document.addEventListener("DOMContentLoaded", () => {
+          document.getElementById('downloadFile').setAttribute('href', URL)
+        });
   </script>
 </body>
 </html>
